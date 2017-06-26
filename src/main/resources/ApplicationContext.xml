@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 扫描Service实现类所在的包 -->
+    <context:component-scan base-package="ultrasafe.service"/>
+
+    <!-- 配置数据源 -->
+    <!-- c3p0连接池配置 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="oracle.jdbc.driver.OracleDriver" />
+        <property name="jdbcUrl" value="jdbc:oracle:thin:@127.0.0.1:1521:orclyhy" />
+        <!-- 用户名 -->
+        <property name="user" value="scott" />
+        <!-- 用户密码 -->
+        <property name="password" value="tiger" />
+
+        <!--连接池中保留的最大连接数。默认值: 15 -->
+        <property name="maxPoolSize" value="20" />
+        <!-- 连接池中保留的最小连接数，默认为：3 -->
+        <property name="minPoolSize" value="2" />
+        <!-- 初始化连接池中的连接数，取值应在minPoolSize与maxPoolSize之间，默认为3 -->
+        <property name="initialPoolSize" value="2" />
+    </bean>
+
+    <!-- 配置spring JDBC -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <bean id="empDao" class="ultrasafe.dao.EmpDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="deptDao" class="ultrasafe.dao.DeptDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="jdbcDao" class="ultrasafe.dao.SpringJDBCDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="jdbcQueryDao" class="ultrasafe.dao.SpringJDBCQueryDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="batchUpdateDao" class="ultrasafe.dao.BatchUpdateDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="executeDao" class="ultrasafe.dao.ExecuteDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+
+    <!-- 配置事务管理器 -->
+
+    <!-- <bean id="transactionManager"
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean> -->
+
+    <!-- 为通知指定事务管理器 -->
+    <!-- <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+        指明交给 通知增强的方法
+        <tx:attributes>
+            指明拦截的方法 ：以tx_、add、update、delete开头
+            <tx:method name="*" isolation="DEFAULT" propagation="REQUIRED" />
+        </tx:attributes>
+    </tx:advice>
+ -->
+    <!-- 配置切面(AOP) -->
+    <!-- <aop:config>
+        定义切入点: 指定service实现包下的所有类的所有方法
+        <aop:pointcut expression="execution(*
+        ultrasafe.service..*(..))"
+            id="advicePointCut" />
+        设置所使用的事务通知
+        <aop:advisor advice-ref="transactionAdvice" pointcut-ref="advicePointCut" />
+    </aop:config> -->
+
+
+</beans>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <!-- 设置控制器组件扫描器: base-package="控制器所在文件夹" -->
+    <!-- 自动扫描bean，把作了注解的类转换为bean -->
+    <context:component-scan base-package="ultrasafe.controller"/>
+
+    <!-- 1、启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+   <!-- <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>-->
+    <!-- 用于将对象转换为 JSON -->
+   <!-- <bean id="stringConverter"
+          class="org.springframework.http.converter.StringHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/plain;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"></bean>
+
+    <bean      class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="stringConverter" />
+                <ref bean="jsonConverter" />
+            </list>
+        </property>
+    </bean>-->
+
+    <!-- 2、注解驱动-->
+    <mvc:annotation-driven/>
+    <!-- 消息转换器,resposne返回到页面的字符集 -->
+<!--    <mvc:message-converters register-defaults="true">
+        <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+            <property name="supportedMediaTypes" value="text/html;charset=UTF-8"/>
+        </bean>
+    </mvc:message-converters>-->
+
+
+    <!--针对freemarker的视图配置-->
+    <!-- 一定要放在viewResolver的前面，这样就先去找freemarker的 -->
+
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/WEB-INF/ftl/"/>
+        <property name="freemarkerSettings">
+            <props>
+                <prop key="locale">zh_CN</prop>
+                <prop key="number_format">0.####</prop>
+                <prop key="default_encoding">UTF8</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+
+        <property name="cache" value="true"/>
+        <property name="prefix" value=""/>
+        <property name="suffix" value=".ftl"/>
+        <property name="contentType" value="text/html; charset=UTF-8"/>
+
+    </bean>
+
+    <!-- 设置视图解析器 InternalResourceViewResolver是UrlBasedViewResolver的子类，用法上是一样 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+    </bean>
+
+
+</beans>
